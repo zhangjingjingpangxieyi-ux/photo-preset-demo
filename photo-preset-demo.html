@@ -1558,8 +1558,9 @@ function renderWaterfall() {
 }
 
 function getSceneImageUrl(scene) {
-  // 优先用 cover_url（完整图片链接）
+  // 优先用 cover_url（完整图片链接，bridge 输出为 coverUrl）
   if (scene.cover_url && scene.cover_url.trim()) return scene.cover_url.trim();
+  if (scene.coverUrl && scene.coverUrl.trim()) return scene.coverUrl.trim();
   // 其次用 cover（文件名），拼 public/images/ 路径
   if (scene.cover && scene.cover.trim()) return 'public/images/' + scene.cover.trim();
   return null;
