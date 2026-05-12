@@ -1,0 +1,18 @@
+name = "feishu-bridge-worker"
+main = "index.js"
+compatibility_date = "2024-01-01"
+
+# 环境变量（敏感信息建议在 Dashboard 设置，这里用默认值）
+[vars]
+FEISHU_APP_ID = "cli_aa8b28a1143b1cc6"
+FEISHU_APP_TOKEN = "ABMhb0ZXAaOGwpsYbGIc4Y2ynxe"
+TBL_SCENES = "tblWlVlgyKKjrPs7"
+TBL_CODES = "tblncLB5EQMGMs3U"
+
+# secrets（敏感信息，上传前通过 wrangler secret put 设置）
+# FEISHU_APP_SECRET = (set via wrangler secret put)
+
+# 绑定 KV 缓存（可选，当前用默认缓存）
+kv_namespaces = []
+
+# Workers AI / 其它绑定留空

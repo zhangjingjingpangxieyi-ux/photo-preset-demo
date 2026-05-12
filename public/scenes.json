@@ -1,0 +1,162 @@
+{
+  "三里屯soho咖啡馆": {
+    "id": "recvjnpqeW7M34",
+    "title": "三里屯SOHO咖啡馆",
+    "badge": "室内·咖啡厅",
+    "aperture": "f/2.0",
+    "shutter": "1/125s",
+    "iso": "800",
+    "wb": "4000K",
+    "metering": "评价测光",
+    "focus": "自动对焦",
+    "ev": "+0.3",
+    "tips": [
+      "靠窗位置光线最好，避开正午直射。背景虚化选人物距离桌面1.5m以上。"
+    ],
+    "locked": true,
+    "imgEmoji": "📸",
+    "coverUrl": "",
+    "category1": "室内",
+    "category2": "咖啡厅"
+  },
+  "公园草坪黄昏": {
+    "id": "recvjnpqA0GgO2",
+    "title": "公园草坪黄昏",
+    "badge": "室外·公园",
+    "aperture": "f/2.8",
+    "shutter": "1/500s",
+    "iso": "200",
+    "wb": "5500K",
+    "metering": "点测光",
+    "focus": "自动对焦",
+    "ev": "-0.3",
+    "tips": [
+      "黄金时段前30分钟最佳，逆光拍摄注意补曝光补偿。"
+    ],
+    "locked": false,
+    "imgEmoji": "📸",
+    "coverUrl": "",
+    "category1": "室外",
+    "category2": "公园"
+  },
+  "地铁站台": {
+    "id": "recvjnpqUWhExb",
+    "title": "地铁站台",
+    "badge": "室内·地铁",
+    "aperture": "f/2.0",
+    "shutter": "1/200s",
+    "iso": "1600",
+    "wb": "3800K",
+    "metering": "评价测光",
+    "focus": "自动对焦",
+    "ev": "0",
+    "tips": [
+      "站台灯光偏暖，白平衡手动调低偏冷可减少色偏。"
+    ],
+    "locked": true,
+    "imgEmoji": "📸",
+    "coverUrl": "",
+    "category1": "室内",
+    "category2": "地铁"
+  },
+  "街头霓虹夜景": {
+    "id": "recvjnpreicFhf",
+    "title": "街头霓虹夜景",
+    "badge": "室外·夜景",
+    "aperture": "f/2.0",
+    "shutter": "1/60s",
+    "iso": "3200",
+    "wb": "AWB",
+    "metering": "评价测光",
+    "focus": "手动对焦",
+    "ev": "+0.7",
+    "tips": [
+      "手持夜拍极限快门约1/60s，建议找支撑物。AWB可保留霓虹氛围色。"
+    ],
+    "locked": true,
+    "imgEmoji": "📸",
+    "coverUrl": "",
+    "category1": "室外",
+    "category2": "街上"
+  },
+  "商场中庭": {
+    "id": "recvjnprxCZqrW",
+    "title": "商场中庭",
+    "badge": "室内·商场",
+    "aperture": "f/3.5",
+    "shutter": "1/100s",
+    "iso": "640",
+    "wb": "4200K",
+    "metering": "评价测光",
+    "focus": "自动对焦",
+    "ev": "+0.3",
+    "tips": [
+      "玻璃幕墙反光处注意偏光，可用手遮挡镜头边缘减少鬼影。"
+    ],
+    "locked": true,
+    "imgEmoji": "📸",
+    "coverUrl": "",
+    "category1": "室内",
+    "category2": "商场"
+  },
+  "家里窗边": {
+    "id": "recvjnprS073Nv",
+    "title": "家里窗边",
+    "badge": "室内·家里",
+    "aperture": "f/2.0",
+    "shutter": "1/80s",
+    "iso": "400",
+    "wb": "5000K",
+    "metering": "评价测光",
+    "focus": "自动对焦",
+    "ev": "+0.5",
+    "tips": [
+      "阴天散射光最柔和，直射阳光下可用白色窗帘扩散。拍美食把物体靠近窗口。"
+    ],
+    "locked": false,
+    "imgEmoji": "📸",
+    "coverUrl": "",
+    "category1": "室内",
+    "category2": "家里"
+  },
+  "日落海边": {
+    "id": "recvjnpsaWOdO4",
+    "title": "日落海边",
+    "badge": "室外·日落",
+    "aperture": "f/5.6",
+    "shutter": "1/1000s",
+    "iso": "100",
+    "wb": "6500K",
+    "metering": "点测光",
+    "focus": "手动对焦",
+    "ev": "-0.7",
+    "tips": [
+      "对着太阳曝光会欠曝人物，点测光对准人物后锁定曝光再构图。"
+    ],
+    "locked": false,
+    "imgEmoji": "📸",
+    "coverUrl": "",
+    "category1": "室外",
+    "category2": "日落"
+  },
+  "阴天户外街拍": {
+    "id": "recvjnpsyAShbJ",
+    "title": "阴天户外街拍",
+    "badge": "室外·街上",
+    "aperture": "f/2.8",
+    "shutter": "1/250s",
+    "iso": "400",
+    "wb": "6000K",
+    "metering": "评价测光",
+    "focus": "自动对焦",
+    "ev": "+0.3",
+    "tips": [
+      "阴天是拍照福音，光线均匀无死角。白平衡略偏暖防止灰冷画面。"
+    ],
+    "locked": false,
+    "imgEmoji": "📸",
+    "coverUrl": "",
+    "category1": "室外",
+    "category2": "街上"
+  }
+}
