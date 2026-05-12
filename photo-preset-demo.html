@@ -1002,6 +1002,25 @@
   .img-subway  { height: 190px; background: linear-gradient(135deg, #101420 0%, #1a2030 50%, #0c1018 100%); position: relative; overflow: hidden; }
   .img-default { height: 180px; background: linear-gradient(135deg, #1a1a2e 0%, #2a1a1e 100%); opacity: 0.5; }
 
+  /* 真实图片样式 */
+  .card-img {
+    width: 100%;
+    display: block;
+    object-fit: cover;
+  }
+  .detail-img {
+    width: 100%;
+    height: 280px;
+    object-fit: cover;
+    display: block;
+  }
+  .detail-img-slide {
+    min-width: 100%;
+    flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+  }
+
   .detail-img-large {
     height: 280px;
     width: 100%;
@@ -1114,16 +1133,8 @@
     <!-- 图片轮播 -->
     <div class="detail-images">
       <div class="image-slides" id="image-slides">
-        <div class="image-slide">
-          <div class="detail-img-large img-cafe" id="detail-img-0">
-            <div class="img-label" style="font-size:64px;opacity:0.2" id="detail-img-label-0"></div>
-          </div>
-        </div>
-        <div class="image-slide">
-          <div class="detail-img-large img-cafe" style="filter:saturate(1.3) brightness(1.1)" id="detail-img-1">
-            <div class="img-label" style="font-size:64px;opacity:0.12" id="detail-img-label-1"></div>
-          </div>
-        </div>
+        <div class="image-slide" id="slide-0"></div>
+        <div class="image-slide" id="slide-1"></div>
       </div>
       <div class="image-dots">
         <div class="dot active" id="dot-0"></div>
@@ -1527,13 +1538,12 @@ function renderWaterfall() {
     const s = scenes[k];
     if (!s) return '';
     const isLocked = s.locked && !isUnlocked;
-    const imgClass = s.imgEmoji ? getImgClass(s.imgEmoji) : 'img-default';
+    const h = 120 + Math.floor(Math.random()*60);
+    const imgHtml = getSceneImageHtml(s, h);
     return `
       <div class="card" onclick="openDetail('${k}')">
-        <div class="card-img-placeholder">
-          <div class="${imgClass}" style="height:${120 + Math.floor(Math.random()*60)}px">
-            <div class="img-label" style="font-size:${22+Math.floor(Math.random()*18)}px;opacity:0.15">${s.imgEmoji||'📸'}</div>
-          </div>
+        <div class="card-img-placeholder" style="position:relative;overflow:hidden;">
+          ${imgHtml}
           ${isLocked ? `<div class="card-lock"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M18 8h-1V6c0-2.8-2.2-5-5-5S7 3.2 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-2 2zm3.1-9H8.9V6c0-1.7 1.4-3.1 3.1-3.1 1.7 0 3.1 1.4 3.1 3.1v2z"/></svg> 付费</div>` : ''}
         </div>
         <div class="card-info">
@@ -1545,6 +1555,83 @@ function renderWaterfall() {
       </div>
     `;
   }).join('');
+}
+
+function getSceneImageUrl(scene) {
+  // 优先用 cover_url（完整图片链接）
+  if (scene.cover_url && scene.cover_url.trim()) return scene.cover_url.trim();
+  // 其次用 cover（文件名），拼 public/images/ 路径
+  if (scene.cover && scene.cover.trim()) return 'public/images/' + scene.cover.trim();
+  return null;
+}
+
+function getSceneImageHtml(scene, height) {
+  const url = getSceneImageUrl(scene);
+  if (url) {
+    // 有真实图片：用 <img>，onerror 时回退到 emoji 占位图
+    const emoji = scene.imgEmoji || '📸';
+    return `<img class="card-img" style="height:${height}px;width:100%;object-fit:cover"
+      src="${url}"
+      alt="${scene.title || ''}"
+      onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"
+    /><div class="${getImgClass(scene.imgEmoji)}" style="height:${height}px;display:none;align-items:center;justify-content:center;position:absolute;inset:0;">
+      <div style="font-size:${Math.max(22,height/3)}px;opacity:0.15">${emoji}</div>
+    </div>`;
+  }
+  // 无真实图片：用 emoji 占位图
+  const emoji = scene.imgEmoji || '📸';
+  const cls = getImgClass(scene.imgEmoji);
+  return `<div class="${cls}" style="height:${height}px;display:flex;align-items:center;justify-content:center;">
+    <div style="font-size:${Math.max(22,height/3)}px;opacity:0.15">${emoji}</div>
+  </div>`;
+}
+
+function getDetailImageHtml(scene) {
+  const url = getSceneImageUrl(scene);
+  if (url) {
+    return `<img class="detail-img" src="${url}" alt="${scene.title || ''}"
+      onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
+      <div class="${getImgClass(scene.imgEmoji)} detail-img-large" style="display:none;">
+        <div class="img-label" style="font-size:64px;opacity:0.2">${scene.imgEmoji || '📸'}</div>
+      </div>`;
+  }
+  return '';  // 详情页用原有的 emoji 占位图逻辑
+}
+
+function renderDetailImages(scene) {
+  const slide0 = document.getElementById('slide-0');
+  const slide1 = document.getElementById('slide-1');
+  const url = getSceneImageUrl(scene);
+
+  if (url) {
+    // 有真实图片：slide-0 原图，slide-1 加滤镜
+    slide0.innerHTML = `<img class="detail-img" src="${url}" alt="${scene.title || ''}"
+      onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
+      <div class="${getImgClass(scene.imgEmoji)} detail-img-large" style="display:none;align-items:center;justify-content:center;position:absolute;inset:0;">
+        <div style="font-size:64px;opacity:0.2">${scene.imgEmoji || '📸'}</div>
+      </div>`;
+    slide1.innerHTML = `<img class="detail-img" src="${url}" alt="${scene.title || ''}" style="filter:saturate(1.3) brightness(1.1)"
+      onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
+      <div class="${getImgClass(scene.imgEmoji)} detail-img-large" style="display:none;align-items:center;justify-content:center;position:absolute;inset:0;">
+        <div style="font-size:64px;opacity:0.12">${scene.imgEmoji || '📸'}</div>
+      </div>`;
+  } else {
+    // 无真实图片：用 emoji 占位图（渐变背景）
+    const emoji = scene.imgEmoji || '📸';
+    const cls = getImgClass(scene.imgEmoji);
+    slide0.innerHTML = `<div class="${cls} detail-img-large" style="align-items:center;justify-content:center;">
+        <div style="font-size:64px;opacity:0.2">${emoji}</div>
+      </div>`;
+    slide1.innerHTML = `<div class="${cls} detail-img-large" style="align-items:center;justify-content:center;filter:saturate(1.3) brightness(1.1)">
+        <div style="font-size:64px;opacity:0.12">${emoji}</div>
+      </div>`;
+  }
+
+  // 重置轮播位置
+  slideIndex = 0;
+  document.getElementById('image-slides').style.transform = 'translateX(0%)';
+  document.getElementById('dot-0').classList.add('active');
+  document.getElementById('dot-1').classList.remove('active');
 }
 
 function getImgClass(emoji) {
@@ -1597,9 +1684,8 @@ function openDetail(sceneKey) {
     `<div class="tip-item"><span class="tip-icon">💡</span><span>${t}</span></div>`
   ).join('');
 
-  // 图片 emoji
-  document.getElementById('detail-img-label-0').textContent = s.imgEmoji || '📸';
-  document.getElementById('detail-img-label-1').textContent = s.imgEmoji || '📸';
+  // 渲染详情页图片（支持真实图片 + emoji 占位）
+  renderDetailImages(s);
 
   // 付费/免费
   const lockedSection = document.getElementById('params-locked-section');
