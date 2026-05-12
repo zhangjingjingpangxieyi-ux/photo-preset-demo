@@ -1461,18 +1461,19 @@ function renderLevel2Filters() {
     // 全部：显示所有二级分类
     const set = new Set();
     allKeys.forEach(k => {
-      const b = scenes[k].badge || '';
-      const parts = b.split(' · ');
-      if (parts[1]) set.add(parts[1]);
+      const s = scenes[k];
+      const sub = s.category2 || ((s.badge || '').split(/\s*·\s*/)[1] || '');
+      if (sub) set.add(sub);
     });
     tags = tags.concat(Array.from(set));
   } else {
     const set = new Set();
     allKeys.forEach(k => {
-      const b = scenes[k].badge || '';
-      if (b.startsWith(currentLevel1)) {
-        const parts = b.split(' · ');
-        if (parts[1]) set.add(parts[1]);
+      const s = scenes[k];
+      const cat = s.category1 || ((s.badge || '').split(/\s*·\s*/)[0] || '');
+      if (cat === currentLevel1) {
+        const sub = s.category2 || ((s.badge || '').split(/\s*·\s*/)[1] || '');
+        if (sub) set.add(sub);
       }
     });
     tags = tags.concat(Array.from(set));
@@ -1503,14 +1504,14 @@ function applyFilter() {
   filteredKeys = allKeys.filter(k => {
     const s = scenes[k];
     if (!s) return false;
-    // 一级筛选
+    // 一级筛选（兼容 '·' 和 ' · ' 两种格式）
     if (currentLevel1 !== 'all') {
-      const cat = (s.badge || '').split(' · ')[0] || '';
+      const cat = (s.category1 || (s.badge || '').split(/\s*·\s*/)[0] || '');
       if (cat !== currentLevel1) return false;
     }
-    // 二级筛选
+    // 二级筛选（兼容 '·' 和 ' · ' 两种格式）
     if (currentLevel2 !== '全部') {
-      const sub = (s.badge || '').split(' · ')[1] || '';
+      const sub = (s.category2 || (s.badge || '').split(/\s*·\s*/)[1] || '');
       if (sub !== currentLevel2) return false;
     }
     return true;
