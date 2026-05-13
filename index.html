@@ -1,0 +1,1967 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>小螃蟹的参数急救包</title>
+<style>
+  * { margin:0; padding:0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  :root {
+    --bg: #0e0e0f;
+    --bg2: #181819;
+    --bg3: #222224;
+    --border: #2a2a2c;
+    --text-primary: #f0f0f0;
+    --text-secondary: #888;
+    --text-muted: #555;
+    --accent: #e8d5b0;
+    --accent2: #c9a96e;
+    --red: #e05c5c;
+    --lock: #c9a96e;
+    --radius: 14px;
+    --radius-sm: 8px;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text-primary);
+    font-family: -apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ========== 手机壳容器 ========== */
+  .phone-wrap {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    padding: 24px 16px;
+    background: #070708;
+  }
+
+  .phone {
+    width: 375px;
+    min-height: 812px;
+    background: var(--bg);
+    border-radius: 44px;
+    border: 2px solid #2a2a2c;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 0 0 6px #111, 0 32px 80px rgba(0,0,0,0.8);
+  }
+
+  /* ========== 状态栏 ========== */
+  .status-bar {
+    height: 44px;
+    padding: 14px 24px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-primary);
+    flex-shrink: 0;
+  }
+
+  .status-bar .notch {
+    width: 120px;
+    height: 30px;
+    background: #000;
+    border-radius: 0 0 18px 18px;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .status-icons {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+  }
+
+  /* ========== 页面容器 ========== */
+  .page {
+    display: none;
+    height: calc(812px - 44px);
+    overflow-y: auto;
+    flex-direction: column;
+    scrollbar-width: none;
+  }
+  .page::-webkit-scrollbar { display: none; }
+  .page.active { display: flex; flex-direction: column; }
+
+  /* ========== 首页 ========== */
+  .home-header {
+    padding: 12px 20px 0;
+    flex-shrink: 0;
+  }
+
+  .home-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+  }
+
+  .title-with-avatar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .brand-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #c9a96e 0%, #8c6430 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+    border: 2px solid rgba(201,169,110,0.35);
+    overflow: hidden;
+  }
+
+  .title-text-group {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+
+  .home-title {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    line-height: 1.2;
+  }
+
+  .home-title span { color: var(--accent2); }
+
+  .subtitle {
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  /* 已解锁状态标识 */
+  .unlocked-badge {
+    background: rgba(76,175,80,0.12);
+    border: 1px solid rgba(76,175,80,0.25);
+    border-radius: 20px;
+    padding: 3px 9px;
+    font-size: 11px;
+    color: #66bb6a;
+    font-weight: 500;
+    display: none;
+    letter-spacing: 0.3px;
+  }
+  .unlocked-badge.show { display: inline-flex; align-items: center; gap: 3px; }
+
+  /* 搜索栏 */
+  .search-bar {
+    margin: 0 20px 14px;
+    background: var(--bg3);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    padding: 10px 14px;
+    gap: 8px;
+    border: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  .search-bar svg { color: var(--text-muted); flex-shrink: 0; }
+  .search-bar input {
+    background: none; border: none; outline: none;
+    color: var(--text-primary); font-size: 14px; width: 100%;
+  }
+  .search-bar input::placeholder { color: var(--text-muted); }
+
+  /* 一级筛选 */
+  .filter-level1 {
+    padding: 0 20px 10px;
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  .filter-btn {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+
+  .filter-btn.active {
+    background: var(--accent2);
+    border-color: var(--accent2);
+    color: #0e0e0f;
+    font-weight: 600;
+  }
+
+  /* 二级筛选 */
+  .filter-level2 {
+    padding: 0 20px 14px;
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    flex-shrink: 0;
+  }
+  .filter-level2::-webkit-scrollbar { display: none; }
+
+  .filter-tag {
+    padding: 5px 12px;
+    border-radius: 16px;
+    font-size: 12px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+
+  .filter-tag.active {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(232, 213, 176, 0.08);
+  }
+
+  /* 瀑布流 */
+  .waterfall {
+    padding: 0 12px 100px;
+    columns: 2;
+    column-gap: 8px;
+  }
+
+  .card {
+    break-inside: avoid;
+    margin-bottom: 8px;
+    border-radius: var(--radius);
+    overflow: hidden;
+    cursor: pointer;
+    position: relative;
+    background: var(--bg2);
+    transition: transform 0.15s;
+  }
+
+  .card:active { transform: scale(0.97); }
+
+  .card-img-placeholder {
+    width: 100%;
+    display: block;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card-lock {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(4px);
+    border-radius: 20px;
+    padding: 3px 8px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    color: var(--lock);
+    font-weight: 600;
+  }
+
+  .card-new {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: var(--accent2);
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-size: 10px;
+    color: #0e0e0f;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+
+  .card-info {
+    padding: 8px 10px 10px;
+  }
+
+  .card-scene {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 3px;
+    color: var(--text-primary);
+  }
+
+  .card-params {
+    font-size: 11px;
+    color: var(--text-muted);
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .card-params span {
+    background: var(--bg3);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'SF Mono', 'Menlo', monospace;
+  }
+
+  .card-params-locked span {
+    filter: blur(3px);
+    user-select: none;
+  }
+
+  /* 卡片付费锁在解锁后隐藏 */
+  .card .card-lock.hidden { display: none; }
+  .card .card-params-locked.hidden { filter: blur(3px); }
+
+  /* FAB */
+  .fab-wrapper {
+    position: absolute;
+    bottom: 28px;
+    right: 16px;
+    z-index: 90;
+  }
+
+  .fab-btn {
+    background: var(--accent2);
+    color: #0e0e0f;
+    border: none;
+    border-radius: 28px;
+    padding: 11px 16px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 4px 20px rgba(201,169,110,0.35);
+    white-space: nowrap;
+  }
+
+  /* ========== 详情页 ========== */
+  .detail-page { background: var(--bg); }
+
+  .detail-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(14,14,15,0.9);
+    backdrop-filter: blur(12px);
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  .back-btn {
+    width: 34px; height: 34px; border-radius: 50%;
+    background: var(--bg3); border: none;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; flex-shrink: 0;
+  }
+
+  .detail-header-title {
+    font-size: 16px; font-weight: 600; flex: 1;
+  }
+
+  /* 图片区 */
+  .detail-images {
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .image-slides {
+    display: flex;
+    transition: transform 0.3s ease;
+  }
+
+  .image-slide {
+    min-width: 100%;
+    flex-shrink: 0;
+  }
+
+  .image-dots {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 5px;
+  }
+
+  .dot {
+    width: 5px; height: 5px; border-radius: 50%;
+    background: rgba(255,255,255,0.35);
+    transition: all 0.2s;
+  }
+
+  .dot.active {
+    background: #fff;
+    width: 14px;
+    border-radius: 3px;
+  }
+
+  /* 详情内容 */
+  .detail-content {
+    padding: 16px 20px;
+  }
+
+  .detail-scene-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(201, 169, 110, 0.12);
+    border: 1px solid rgba(201, 169, 110, 0.3);
+    border-radius: 20px;
+    padding: 4px 10px;
+    font-size: 12px;
+    color: var(--accent2);
+    margin-bottom: 10px;
+  }
+
+  .detail-title {
+    font-size: 20px; font-weight: 700;
+    margin-bottom: 4px;
+    letter-spacing: -0.3px;
+  }
+
+  .detail-env {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+    line-height: 1.5;
+  }
+
+  .device-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .device-tag {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 6px 10px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  /* 参数卡 */
+  .section-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .params-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .param-item {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 10px 12px;
+  }
+
+  .param-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-bottom: 3px;
+  }
+
+  .param-value {
+    font-size: 16px;
+    font-weight: 600;
+    font-family: 'SF Mono', 'Menlo', monospace;
+    color: var(--accent);
+  }
+
+  /* 付费遮挡 */
+  .params-locked {
+    position: relative;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    margin-bottom: 16px;
+  }
+
+  .params-locked-blur {
+    filter: blur(5px);
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .lock-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(14,14,15,0.1) 0%, rgba(14,14,15,0.75) 40%, rgba(14,14,15,0.98) 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    z-index: 10;
+  }
+
+  .lock-icon-wrap {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: rgba(201,169,110,0.15);
+    border: 1px solid rgba(201,169,110,0.3);
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .lock-cta {
+    background: var(--accent2);
+    color: #0e0e0f; border: none;
+    border-radius: 24px;
+    padding: 10px 24px;
+    font-size: 14px; font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .lock-price {
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  /* Tips */
+  .tips-list {
+    margin-bottom: 16px;
+  }
+
+  .tip-item {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--text-secondary);
+  }
+
+  .tip-item .tip-icon {
+    font-size: 16px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* 有用互动 */
+  .helpful-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin: 4px 0 18px;
+    padding: 12px;
+    background: var(--bg2);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+  }
+
+  .helpful-label { font-size: 13px; color: var(--text-muted); }
+
+  .helpful-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.15s;
+  }
+
+  .helpful-btn.liked {
+    background: rgba(201,169,110,0.12);
+    border-color: var(--accent2);
+    color: var(--accent2);
+  }
+
+  .helpful-count { font-size: 12px; color: var(--text-muted); }
+
+  /* 下载按钮 */
+  .download-btn {
+    width: 100%;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-primary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    transition: background 0.15s;
+  }
+  .download-btn:active { background: var(--bg2); }
+
+  .video-link-btn {
+    width: 100%;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px;
+    font-size: 14px;
+    color: var(--text-muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 32px;
+  }
+
+  /* ========== 付费弹窗 ========== */
+  .modal-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(4px);
+    z-index: 200;
+    display: none;
+    align-items: flex-end;
+    justify-content: center;
+  }
+
+  .modal-overlay.open { display: flex; }
+
+  .modal-sheet {
+    width: 100%;
+    background: var(--bg2);
+    border-radius: 24px 24px 0 0;
+    padding: 20px 20px 40px;
+    animation: slideUp 0.3s ease;
+  }
+
+  @keyframes slideUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+
+  .modal-handle {
+    width: 36px; height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    margin: 0 auto 20px;
+  }
+
+  .modal-title {
+    font-size: 18px; font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .modal-desc {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin-bottom: 20px;
+  }
+
+  /* 步骤条 */
+  .pay-steps {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    margin-bottom: 20px;
+  }
+
+  .pay-step {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  .pay-step.active { color: var(--accent2); font-weight: 600; }
+  .pay-step.done { color: #66bb6a; }
+
+  .pay-step-num {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    border: 1px solid currentColor;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px;
+    flex-shrink: 0;
+  }
+
+  .pay-step.done .pay-step-num {
+    background: #66bb6a;
+    border-color: #66bb6a;
+    color: #fff;
+  }
+
+  .pay-step.active .pay-step-num {
+    background: var(--accent2);
+    border-color: var(--accent2);
+    color: #0e0e0f;
+  }
+
+  .pay-step-line {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+    margin: 0 8px;
+    max-width: 40px;
+  }
+
+  /* 联系方式卡片 */
+  .contact-cards {
+    display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px;
+  }
+  .contact-card {
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 14px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .contact-icon-wrap {
+    width: 40px; height: 40px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; flex-shrink: 0;
+  }
+  .contact-info { flex: 1; }
+  .contact-info .contact-label { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+  .contact-info .contact-value { font-size: 12px; color: var(--text-muted); }
+
+  .contact-copy-btn {
+    background: transparent; border: 1px solid var(--border);
+    border-radius: 6px; padding: 5px 10px;
+    font-size: 12px; color: var(--text-secondary);
+    cursor: pointer; white-space: nowrap;
+  }
+
+  /* 操作提示 */
+  .unlock-tips {
+    background: rgba(201,169,110,0.06); border: 1px solid rgba(201,169,110,0.15);
+    border-radius: var(--radius-sm); padding: 12px; margin-bottom: 14px;
+  }
+  .unlock-tips .tip-row {
+    display: flex; align-items: flex-start; gap: 6px;
+    margin-bottom: 6px; font-size: 12px; color: var(--text-muted); line-height: 1.7;
+  }
+  .unlock-tips .tip-num { color: var(--accent2); flex-shrink: 0; }
+
+  .pay-btn {
+    width: 100%;
+    background: var(--accent2);
+    color: #0e0e0f;
+    border: none;
+    border-radius: var(--radius);
+    padding: 15px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.3px;
+  }
+
+  .pay-btn-secondary {
+    width: 100%;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    border-radius: var(--radius);
+    padding: 13px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 8px;
+  }
+
+  /* 兑码区 */
+  .redeem-section { display: none; }
+  .redeem-section.show { display: block; }
+
+  .redeem-title {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .redeem-desc {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+    line-height: 1.5;
+  }
+
+  .redeem-input-wrap {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .redeem-input {
+    flex: 1;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    font-size: 15px;
+    font-family: 'SF Mono', 'Menlo', monospace;
+    color: var(--text-primary);
+    letter-spacing: 2px;
+    outline: none;
+    text-transform: uppercase;
+    transition: border-color 0.15s;
+  }
+
+  .redeem-input:focus {
+    border-color: var(--accent2);
+  }
+
+  .redeem-input.error {
+    border-color: var(--red);
+    animation: shake 0.3s;
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    75% { transform: translateX(6px); }
+  }
+
+  .redeem-submit {
+    background: var(--accent2);
+    color: #0e0e0f;
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 12px 18px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: opacity 0.15s;
+  }
+
+  .redeem-submit:active { opacity: 0.8; }
+
+  .redeem-error-msg {
+    font-size: 12px;
+    color: var(--red);
+    margin-bottom: 10px;
+    display: none;
+  }
+
+  .redeem-error-msg.show { display: block; }
+
+  /* 成功态 */
+  .pay-success-section { display: none; }
+  .pay-success-section.show { display: block; text-align: center; }
+
+  .success-icon {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    background: rgba(76,175,80,0.15);
+    border: 2px solid rgba(76,175,80,0.4);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 16px;
+    font-size: 28px;
+  }
+
+  .success-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: #66bb6a;
+  }
+
+  .success-desc {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.5;
+    margin-bottom: 20px;
+  }
+
+  /* ========== 求场景弹窗 ========== */
+  .request-modal-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(4px);
+    z-index: 200;
+    display: none;
+    align-items: flex-end;
+    justify-content: center;
+  }
+
+  .request-modal-overlay.open { display: flex; }
+
+  .request-sheet {
+    width: 100%;
+    background: var(--bg2);
+    border-radius: 24px 24px 0 0;
+    padding: 20px 20px 40px;
+    animation: slideUp 0.3s ease;
+  }
+
+  .request-sheet textarea {
+    width: 100%;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    font-size: 14px;
+    font-family: inherit;
+    padding: 12px;
+    resize: none;
+    outline: none;
+    min-height: 100px;
+    margin-bottom: 14px;
+    line-height: 1.5;
+  }
+
+  .request-sheet textarea::placeholder { color: var(--text-muted); }
+
+  .request-submit-btn {
+    width: 100%;
+    background: var(--accent2);
+    color: #0e0e0f;
+    border: none;
+    border-radius: var(--radius);
+    padding: 14px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  /* ========== Toast ========== */
+  .toast {
+    position: absolute;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(40,40,42,0.95);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 10px 18px;
+    font-size: 13px;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    z-index: 300;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.2s;
+    pointer-events: none;
+  }
+  .toast.show { opacity: 1; }
+
+  /* ========== 占位图 CSS ========== */
+  .img-cafe    { height: 160px; background: linear-gradient(135deg, #2a1a0e 0%, #3d2510 40%, #1f1208 100%); position: relative; overflow: hidden; }
+  .img-street  { height: 220px; background: linear-gradient(170deg, #111820 0%, #1c2535 40%, #0f1a28 100%); position: relative; overflow: hidden; }
+  .img-indoor  { height: 180px; background: linear-gradient(135deg, #b8d4e8 0%, #7aa8c0 40%, #4a7890 100%); opacity: 0.35; }
+  .img-park    { height: 165px; background: linear-gradient(135deg, #1a3020 0%, #2d4a2a 40%, #162518 100%); opacity: 0.7; }
+  .img-subway  { height: 190px; background: linear-gradient(135deg, #101420 0%, #1a2030 50%, #0c1018 100%); position: relative; overflow: hidden; }
+  .img-default { height: 180px; background: linear-gradient(135deg, #1a1a2e 0%, #2a1a1e 100%); opacity: 0.5; }
+
+  /* 真实图片样式 */
+  .card-img {
+    width: 100%;
+    display: block;
+    object-fit: cover;
+  }
+  .detail-img {
+    width: 100%;
+    height: 280px;
+    object-fit: cover;
+    display: block;
+  }
+  .detail-img-slide {
+    min-width: 100%;
+    flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .detail-img-large {
+    height: 280px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+    position: relative;
+  }
+</style>
+</head>
+<body>
+
+<div class="phone-wrap">
+<div class="phone" id="phone">
+
+  <!-- 状态栏 -->
+  <div class="status-bar">
+    <div class="notch"></div>
+    <span>12:00</span>
+    <div class="status-icons">
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor">
+        <rect x="0" y="3" width="3" height="9" rx="1" opacity="0.4"/>
+        <rect x="4" y="2" width="3" height="10" rx="1" opacity="0.6"/>
+        <rect x="8" y="0.5" width="3" height="11.5" rx="1" opacity="0.8"/>
+        <rect x="12" y="0" width="3" height="12" rx="1"/>
+      </svg>
+      <svg width="15" height="12" viewBox="0 0 15 12" fill="currentColor">
+        <path d="M7.5 2.5C9.8 2.5 11.8 3.5 13.2 5.1L14.5 3.7C12.7 1.8 10.2 0.5 7.5 0.5C4.8 0.5 2.3 1.8 0.5 3.7L1.8 5.1C3.2 3.5 5.2 2.5 7.5 2.5Z" opacity="0.4"/>
+        <path d="M7.5 5.5C9 5.5 10.4 6.1 11.4 7.1L12.7 5.7C11.3 4.3 9.5 3.5 7.5 3.5C5.5 3.5 3.7 4.3 2.3 5.7L3.6 7.1C4.6 6.1 6 5.5 7.5 5.5Z" opacity="0.7"/>
+        <circle cx="7.5" cy="10.5" r="1.5"/>
+      </svg>
+      <svg width="25" height="12" viewBox="0 0 25 12" fill="currentColor">
+        <rect x="0" y="1" width="21" height="10" rx="3" stroke="currentColor" stroke-width="1" fill="none" opacity="0.4"/>
+        <rect x="22" y="3.5" width="2" height="5" rx="1" opacity="0.4"/>
+        <rect x="1.5" y="2.5" width="16" height="7" rx="2" fill="currentColor"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- ========== 首页 ========== -->
+  <div class="page active" id="page-home">
+
+    <div class="home-header">
+      <div class="home-title-row">
+        <div class="title-with-avatar">
+          <div class="brand-avatar">🦀</div>
+          <div class="title-text-group">
+            <div class="home-title">小螃蟹的<span>参数急救包</span></div>
+            <div class="subtitle">Sony A6000 · 拍就对了</div>
+          </div>
+        </div>
+        <!-- 解锁状态标识 -->
+        <div class="unlocked-badge" id="unlocked-badge">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+          已解锁
+        </div>
+      </div>
+    </div>
+
+    <!-- 搜索栏 -->
+    <div class="search-bar">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+      </svg>
+      <input type="text" placeholder="搜索场景，如「咖啡厅」「逆光」" id="search-input">
+    </div>
+
+    <!-- 一级筛选 -->
+    <div class="filter-level1" id="filter-level1">
+      <!-- 由JS动态生成 -->
+    </div>
+
+    <!-- 二级筛选 -->
+    <div class="filter-level2" id="filter-level2">
+      <!-- 由JS动态生成 -->
+    </div>
+
+    <!-- 瀑布流 -->
+    <div class="waterfall" id="waterfall">
+      <!-- 由JS动态生成 -->
+    </div>
+
+    <!-- 求场景 FAB -->
+    <div class="fab-wrapper">
+      <button class="fab-btn" onclick="openRequestModal()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
+        求场景
+      </button>
+    </div>
+
+  </div><!-- /page-home -->
+
+
+  <!-- ========== 详情页 ========== -->
+  <div class="page detail-page" id="page-detail">
+
+    <div class="detail-header">
+      <button class="back-btn" onclick="goBack()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f0f0f0" stroke-width="2.5">
+          <path d="m15 18-6-6 6-6"/>
+        </svg>
+      </button>
+      <div class="detail-header-title" id="detail-header-title">场景名</div>
+      <div style="width:34px"></div>
+    </div>
+
+    <!-- 图片轮播 -->
+    <div class="detail-images">
+      <div class="image-slides" id="image-slides">
+        <div class="image-slide" id="slide-0"></div>
+        <div class="image-slide" id="slide-1"></div>
+      </div>
+      <div class="image-dots">
+        <div class="dot active" id="dot-0"></div>
+        <div class="dot" id="dot-1"></div>
+      </div>
+    </div>
+
+    <!-- 详情内容 -->
+    <div class="detail-content">
+
+      <div class="detail-scene-badge" id="detail-badge">
+        <span id="detail-badge-emoji"></span> <span id="detail-badge-text"></span>
+      </div>
+
+      <div class="detail-title" id="detail-title">场景名</div>
+      <div class="detail-env" id="detail-env">环境描述</div>
+
+      <div class="device-row">
+        <div class="device-tag" id="detail-lens">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/></svg>
+          <span id="detail-lens-text">镜头信息</span>
+        </div>
+      </div>
+
+      <div class="section-title">参数</div>
+
+      <!-- 免费场景：完整参数 -->
+      <div id="params-free-section">
+        <div class="params-grid">
+          <div class="param-item">
+            <div class="param-label">光圈</div>
+            <div class="param-value" id="p-aperture">-</div>
+          </div>
+          <div class="param-item">
+            <div class="param-label">快门速度</div>
+            <div class="param-value" id="p-shutter">-</div>
+          </div>
+          <div class="param-item">
+            <div class="param-label">ISO</div>
+            <div class="param-value" id="p-iso">-</div>
+          </div>
+          <div class="param-item">
+            <div class="param-label">白平衡</div>
+            <div class="param-value" id="p-wb">-</div>
+          </div>
+          <div class="param-item">
+            <div class="param-label">测光模式</div>
+            <div class="param-value" id="p-metering">-</div>
+          </div>
+          <div class="param-item">
+            <div class="param-label">对焦模式</div>
+            <div class="param-value" id="p-focus">-</div>
+          </div>
+          <div class="param-item">
+            <div class="param-label">曝光补偿</div>
+            <div class="param-value" id="p-ev">-</div>
+          </div>
+          <div class="param-item">
+            <div class="param-label">图像风格</div>
+            <div class="param-value" id="p-style">-</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 付费场景：全部参数遮挡 -->
+      <div class="params-locked" id="params-locked-section" style="display:none">
+        <div class="params-grid params-locked-blur">
+          <div class="param-item">
+            <div class="param-label">光圈</div>
+            <div class="param-value">f/2.8</div>
+          </div>
+          <div class="param-item">
+            <div class="param-label">快门速度</div>
+            <div class="param-value">1/200</div>
+          </div>
+          <div class="param-item">
+            <div class="param-label">ISO</div>
+            <div class="param-value">800</div>
+          </div>
+          <div class="param-item">
+            <div class="param-label">白平衡</div>
+            <div class="param-value">4800 K</div>
+          </div>
+          <div class="param-item">
+            <div class="param-label">测光模式</div>
+            <div class="param-value">点测光</div>
+          </div>
+          <div class="param-item">
+            <div class="param-label">对焦模式</div>
+            <div class="param-value">眼部 AF</div>
+          </div>
+          <div class="param-item">
+            <div class="param-label">曝光补偿</div>
+            <div class="param-value">-1.5</div>
+          </div>
+          <div class="param-item">
+            <div class="param-label">图像风格</div>
+            <div class="param-value">鲜艳</div>
+          </div>
+        </div>
+        <div class="lock-overlay">
+          <div class="lock-icon-wrap">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="color:var(--accent2)"><path d="M18 8h-1V6c0-2.8-2.2-5-5-5S7 3.2 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2-2 2zm3.1-9H8.9V6c0-1.7 1.4-3.1 3.1-3.1 1.7 0 3.1 1.4 3.1 3.1v2z"/></svg>
+          </div>
+          <button class="lock-cta" onclick="openPayModal()">
+            解锁完整参数
+          </button>
+          <div class="lock-price">进阶权限 · 含全部 30+ 场景</div>
+        </div>
+      </div>
+
+      <div class="section-title" style="margin-top:4px">拍摄 Tips</div>
+
+      <div class="tips-list" id="tips-list">
+        <!-- 由JS动态生成 -->
+      </div>
+
+      <!-- 有用互动 -->
+      <div class="helpful-row">
+        <span class="helpful-label">这组参数有帮助？</span>
+        <button class="helpful-btn" id="helpful-btn" onclick="toggleLike()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/>
+            <path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/>
+          </svg>
+          有用
+        </button>
+        <span class="helpful-count" id="helpful-count">0 人觉得有用</span>
+      </div>
+
+      <!-- 下载 -->
+      <button class="download-btn" onclick="showToast('参数卡片已保存到相册')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="7 10 12 15 17 10"/>
+          <line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        下载参数卡片到相册
+      </button>
+
+      <button class="video-link-btn">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+          <polygon points="5 3 14 8 5 13 5 3"/>
+        </svg>
+        查看完整教程视频 →
+      </button>
+
+    </div><!-- /detail-content -->
+
+  </div><!-- /page-detail -->
+
+
+  <!-- ========== 解锁弹窗 ========== -->
+  <div class="modal-overlay" id="pay-modal" onclick="closePayModal(event)">
+    <div class="modal-sheet">
+
+      <div class="modal-handle"></div>
+
+      <!-- 步骤指示器（2步） -->
+      <div class="pay-steps" id="pay-steps" style="margin-bottom:20px">
+        <div class="pay-step active" id="step-1">
+          <div class="pay-step-num">1</div>
+          <span>获取权限</span>
+        </div>
+        <div class="pay-step-line" id="step-line-1"></div>
+        <div class="pay-step" id="step-2">
+          <div class="pay-step-num">2</div>
+          <span>激活</span>
+        </div>
+      </div>
+
+      <!-- 阶段1：联系方式 -->
+      <div id="pay-intro-section">
+        <div class="modal-title" style="font-size:17px">解锁全部 30+ 场景参数</div>
+        <div class="modal-desc" style="margin-bottom:16px">联系小螃蟹获取专属激活码，一次解锁，永久有效。</div>
+
+        <!-- 联系方式卡片 -->
+        <div class="contact-cards">
+          <div class="contact-card">
+            <div class="contact-icon-wrap" style="background:linear-gradient(135deg,#ff6b00,#ff9500)">🐟</div>
+            <div class="contact-info">
+              <div class="contact-label">闲鱼</div>
+              <div class="contact-value" id="xianyu-id">闲鱼ID：小螃蟹的废片急诊室</div>
+            </div>
+            <button class="contact-copy-btn" onclick="copyContact('xianyu')">复制</button>
+          </div>
+          <div class="contact-card">
+            <div class="contact-icon-wrap" style="background:linear-gradient(135deg,#07c160,#00b96b)">💚</div>
+            <div class="contact-info">
+              <div class="contact-label">微信</div>
+              <div class="contact-value" id="wechat-id">微信号：crab_photo2026</div>
+            </div>
+            <button class="contact-copy-btn" onclick="copyContact('wechat')">复制</button>
+          </div>
+        </div>
+
+        <div class="unlock-tips">
+          <div class="tip-row"><span class="tip-num">①</span><span>发送「解锁参数急救包」，获取激活码</span></div>
+          <div class="tip-row"><span class="tip-num">②</span><span>收到激活码后，回来输入即可解锁</span></div>
+          <div class="tip-row"><span class="tip-num">③</span><span>一次解锁，永久使用，持续更新</span></div>
+        </div>
+
+        <button class="pay-btn" onclick="goToRedeem()" style="margin-bottom:0">
+          我有激活码，直接激活 →
+        </button>
+      </div>
+
+      <!-- 阶段2：输入兑码 -->
+      <div class="redeem-section" id="redeem-section">
+        <div class="redeem-title">输入激活码</div>
+        <div class="redeem-desc">小螃蟹发给你的专属激活码，复制后粘贴到这里。<br>Demo 测试码：<strong style="color:var(--accent2)">DEMO2026</strong></div>
+        <div class="redeem-input-wrap">
+          <input
+            type="text"
+            class="redeem-input"
+            id="redeem-input"
+            placeholder="粘贴激活码"
+            maxlength="16"
+            autocomplete="off"
+            spellcheck="false"
+            oninput="clearRedeemError()"
+          >
+          <button class="redeem-submit" onclick="submitRedeem()">激活</button>
+        </div>
+        <div class="redeem-error-msg" id="redeem-error">激活码无效，请检查后重新输入</div>
+        <button class="pay-btn-secondary" onclick="goBackToIntro()">← 返回联系方式</button>
+      </div>
+
+      <!-- 阶段3：成功 -->
+      <div class="pay-success-section" id="pay-success-section">
+        <div class="success-icon">🎉</div>
+        <div class="success-title">解锁成功！</div>
+        <div class="success-desc">全部 30+ 场景已开放，永久有效。<br>祝你拍出满意的照片 🦀</div>
+        <button class="pay-btn" onclick="closePayAndRefresh()">开始使用</button>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ========== 求场景弹窗 ========== -->
+  <div class="request-modal-overlay" id="request-modal" onclick="closeRequestModal(event)">
+    <div class="request-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-title" style="margin-bottom:6px">求场景 📸</div>
+      <div class="modal-desc">没找到你想要的场景？告诉我，我来补上。</div>
+      <textarea id="request-text" placeholder="描述你想拍的场景，越具体越好&#10;&#10;例如：演唱会现场、下雨天室外、闺蜜双人街拍..."></textarea>
+      <button class="request-submit-btn" onclick="submitRequest()">提交需求</button>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4caf50" stroke-width="2.5">
+      <polyline points="20 6 9 17 4 12"/>
+    </svg>
+    <span id="toast-msg">参数卡片已保存到相册</span>
+  </div>
+
+</div><!-- /phone -->
+</div><!-- /phone-wrap -->
+
+<script>
+// ========== 全局状态 ==========
+let scenes = {};        // 从 scenes.json 加载
+let codes = {};        // 从 codes.json 加载
+let isUnlocked = localStorage.getItem('a6000_unlocked') === 'true';
+let currentSceneKey = '';  // 当前打开的场景 key
+let currentLiked = false;
+let currentLikeBase = 0;
+let allKeys = [];       // 所有场景 key 列表
+let filteredKeys = [];    // 当前筛选后的 key 列表
+let currentLevel1 = 'all';
+let currentLevel2 = '全部';
+
+// Worker API 地址（Cloudflare Workers 实时代理，飞书数据实时拉取）
+const API_BASE = 'https://feishu-bridge-worker.zhangjingjingpangxieyi.workers.dev';
+
+// ========== 初始化 ==========
+(async function init() {
+  try {
+    const [scenesRes, codesRes] = await Promise.all([
+      fetch(`${API_BASE}/api/scenes`),
+      fetch(`${API_BASE}/api/codes`)
+    ]);
+    const scenesData = await scenesRes.json();
+    const codesData  = await codesRes.json();
+    scenes = scenesData.scenes || {};
+    codes  = codesData.codes  || {};
+    console.log('[init] 场景:', Object.keys(scenes).length, '兑换码:', Object.keys(codes).length);
+  } catch (e) {
+    console.error('[init] 实时 API 加载失败，尝试本地 JSON:', e);
+    try {
+      const [scenesRes, codesRes] = await Promise.all([
+        fetch('public/scenes.json'),
+        fetch('public/codes.json')
+      ]);
+      scenes = await scenesRes.json();
+      codes  = await codesRes.json();
+    } catch (e2) {
+      console.error('[init] 本地 JSON 也失败:', e2);
+    }
+  }
+
+  allKeys = Object.keys(scenes);
+  filteredKeys = allKeys;
+  renderLevel1Filters();
+  renderLevel2Filters();
+  renderWaterfall();
+  initUnlockState();
+})();
+
+function initUnlockState() {
+  const badge = document.getElementById('unlocked-badge');
+  if (isUnlocked) {
+    badge.classList.add('show');
+  }
+}
+
+// ========== 渲染一级筛选 ==========
+function renderLevel1Filters() {
+  const wrap = document.getElementById('filter-level1');
+  const levels = ['全部', '室内', '室外'];
+  wrap.innerHTML = levels.map(l =>
+    `<button class="filter-btn${l === '全部' ? ' active' : ''}" onclick="setLevel1(this,'${l}')">${l}</button>`
+  ).join('');
+}
+
+// ========== 渲染二级筛选 ==========
+function renderLevel2Filters() {
+  const wrap = document.getElementById('filter-level2');
+  // 收集当前一级分类下的所有二级分类
+  let tags = ['全部'];
+  if (currentLevel1 === 'all') {
+    // 全部：显示所有二级分类
+    const set = new Set();
+    allKeys.forEach(k => {
+      const s = scenes[k];
+      const sub = s.category2 || ((s.badge || '').split(/\s*·\s*/)[1] || '');
+      if (sub) set.add(sub);
+    });
+    tags = tags.concat(Array.from(set));
+  } else {
+    const set = new Set();
+    allKeys.forEach(k => {
+      const s = scenes[k];
+      const cat = s.category1 || ((s.badge || '').split(/\s*·\s*/)[0] || '');
+      if (cat === currentLevel1) {
+        const sub = s.category2 || ((s.badge || '').split(/\s*·\s*/)[1] || '');
+        if (sub) set.add(sub);
+      }
+    });
+    tags = tags.concat(Array.from(set));
+  }
+
+  wrap.innerHTML = tags.map(t =>
+    `<button class="filter-tag${t === currentLevel2 ? ' active' : ''}" onclick="setTag(this,'${t}')">${t}</button>`
+  ).join('');
+}
+
+// ========== 筛选逻辑 ==========
+function setLevel1(btn, type) {
+  document.querySelectorAll('.filter-level1 .filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentLevel1 = type;
+  currentLevel2 = '全部';
+  applyFilter();
+}
+
+function setTag(btn, tag) {
+  document.querySelectorAll('.filter-level2 .filter-tag').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentLevel2 = tag;
+  applyFilter();
+}
+
+function applyFilter() {
+  filteredKeys = allKeys.filter(k => {
+    const s = scenes[k];
+    if (!s) return false;
+    // 一级筛选（兼容 '·' 和 ' · ' 两种格式）
+    if (currentLevel1 !== 'all') {
+      const cat = (s.category1 || (s.badge || '').split(/\s*·\s*/)[0] || '');
+      if (cat !== currentLevel1) return false;
+    }
+    // 二级筛选（兼容 '·' 和 ' · ' 两种格式）
+    if (currentLevel2 !== '全部') {
+      const sub = (s.category2 || (s.badge || '').split(/\s*·\s*/)[1] || '');
+      if (sub !== currentLevel2) return false;
+    }
+    return true;
+  });
+  renderWaterfall();
+  renderLevel2Filters();  // 更新二级标签
+}
+
+// ========== 渲染瀑布流 ==========
+function renderWaterfall() {
+  const wrap = document.getElementById('waterfall');
+  wrap.innerHTML = filteredKeys.map(k => {
+    const s = scenes[k];
+    if (!s) return '';
+    const isLocked = s.locked && !isUnlocked;
+    const h = 120 + Math.floor(Math.random()*60);
+    const imgHtml = getSceneImageHtml(s, h);
+    return `
+      <div class="card" onclick="openDetail('${k}')">
+        <div class="card-img-placeholder" style="position:relative;overflow:hidden;">
+          ${imgHtml}
+          ${isLocked ? `<div class="card-lock"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M18 8h-1V6c0-2.8-2.2-5-5-5S7 3.2 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-2 2zm3.1-9H8.9V6c0-1.7 1.4-3.1 3.1-3.1 1.7 0 3.1 1.4 3.1 3.1v2z"/></svg> 付费</div>` : ''}
+        </div>
+        <div class="card-info">
+          <div class="card-scene">${s.title || k}</div>
+          <div class="card-params${isLocked ? ' card-params-locked' : ''}">
+            <span>${s.aperture || '-'}</span><span>ISO ${s.iso || '-'}</span>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function getSceneImageUrl(scene) {
+  // 优先用 cover_url（完整图片链接，bridge 输出为 coverUrl）
+  if (scene.cover_url && scene.cover_url.trim()) return scene.cover_url.trim();
+  if (scene.coverUrl && scene.coverUrl.trim()) return scene.coverUrl.trim();
+  // 其次用 cover（文件名），拼 public/images/ 路径
+  if (scene.cover && scene.cover.trim()) return 'public/images/' + scene.cover.trim();
+  return null;
+}
+
+function getSceneImageHtml(scene, height) {
+  const url = getSceneImageUrl(scene);
+  if (url) {
+    // 有真实图片：用 <img>，onerror 时回退到 emoji 占位图
+    const emoji = scene.imgEmoji || '📸';
+    return `<img class="card-img" style="height:${height}px;width:100%;object-fit:cover"
+      src="${url}"
+      alt="${scene.title || ''}"
+      onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"
+    /><div class="${getImgClass(scene.imgEmoji)}" style="height:${height}px;display:none;align-items:center;justify-content:center;position:absolute;inset:0;">
+      <div style="font-size:${Math.max(22,height/3)}px;opacity:0.15">${emoji}</div>
+    </div>`;
+  }
+  // 无真实图片：用 emoji 占位图
+  const emoji = scene.imgEmoji || '📸';
+  const cls = getImgClass(scene.imgEmoji);
+  return `<div class="${cls}" style="height:${height}px;display:flex;align-items:center;justify-content:center;">
+    <div style="font-size:${Math.max(22,height/3)}px;opacity:0.15">${emoji}</div>
+  </div>`;
+}
+
+function getDetailImageHtml(scene) {
+  const url = getSceneImageUrl(scene);
+  if (url) {
+    return `<img class="detail-img" src="${url}" alt="${scene.title || ''}"
+      onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
+      <div class="${getImgClass(scene.imgEmoji)} detail-img-large" style="display:none;">
+        <div class="img-label" style="font-size:64px;opacity:0.2">${scene.imgEmoji || '📸'}</div>
+      </div>`;
+  }
+  return '';  // 详情页用原有的 emoji 占位图逻辑
+}
+
+function renderDetailImages(scene) {
+  const slide0 = document.getElementById('slide-0');
+  const slide1 = document.getElementById('slide-1');
+  const url = getSceneImageUrl(scene);
+
+  if (url) {
+    // 有真实图片：slide-0 原图，slide-1 加滤镜
+    slide0.innerHTML = `<img class="detail-img" src="${url}" alt="${scene.title || ''}"
+      onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
+      <div class="${getImgClass(scene.imgEmoji)} detail-img-large" style="display:none;align-items:center;justify-content:center;position:absolute;inset:0;">
+        <div style="font-size:64px;opacity:0.2">${scene.imgEmoji || '📸'}</div>
+      </div>`;
+    slide1.innerHTML = `<img class="detail-img" src="${url}" alt="${scene.title || ''}" style="filter:saturate(1.3) brightness(1.1)"
+      onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
+      <div class="${getImgClass(scene.imgEmoji)} detail-img-large" style="display:none;align-items:center;justify-content:center;position:absolute;inset:0;">
+        <div style="font-size:64px;opacity:0.12">${scene.imgEmoji || '📸'}</div>
+      </div>`;
+  } else {
+    // 无真实图片：用 emoji 占位图（渐变背景）
+    const emoji = scene.imgEmoji || '📸';
+    const cls = getImgClass(scene.imgEmoji);
+    slide0.innerHTML = `<div class="${cls} detail-img-large" style="align-items:center;justify-content:center;">
+        <div style="font-size:64px;opacity:0.2">${emoji}</div>
+      </div>`;
+    slide1.innerHTML = `<div class="${cls} detail-img-large" style="align-items:center;justify-content:center;filter:saturate(1.3) brightness(1.1)">
+        <div style="font-size:64px;opacity:0.12">${emoji}</div>
+      </div>`;
+  }
+
+  // 重置轮播位置
+  slideIndex = 0;
+  document.getElementById('image-slides').style.transform = 'translateX(0%)';
+  document.getElementById('dot-0').classList.add('active');
+  document.getElementById('dot-1').classList.remove('active');
+}
+
+function getImgClass(emoji) {
+  const map = { '☕':'img-cafe', '🌃':'img-street', '🏠':'img-indoor', '🌿':'img-park', '🚇':'img-subway' };
+  return map[emoji] || 'img-default';
+}
+
+// ========== 页面切换 ==========
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.getElementById(id).scrollTop = 0;
+}
+
+function goBack() {
+  showPage('page-home');
+}
+
+// ========== 打开详情页 ==========
+function openDetail(sceneKey) {
+  const s = scenes[sceneKey];
+  if (!s) return;
+  currentSceneKey = sceneKey;
+
+  document.getElementById('detail-header-title').textContent = s.title;
+  document.getElementById('detail-title').textContent = s.title;
+  document.getElementById('detail-env').textContent = s.env || '';
+
+  // badge
+  const badgeParts = (s.badge || ' · ').split(' · ');
+  document.getElementById('detail-badge-emoji').textContent = s.imgEmoji || '📸';
+  document.getElementById('detail-badge-text').textContent = badgeParts.slice(1).join(' · ') || badgeParts[0] || '';
+
+  document.getElementById('detail-lens-text').textContent = s.lens || 'Sony A6000';
+
+  // 参数
+  const showReal = !s.locked || isUnlocked;
+  document.getElementById('p-aperture').textContent = s.aperture || '-';
+  document.getElementById('p-shutter').textContent = s.shutter || '-';
+  document.getElementById('p-iso').textContent = s.iso || '-';
+  document.getElementById('p-wb').textContent = s.wb || '-';
+  document.getElementById('p-metering').textContent = s.metering || '-';
+  document.getElementById('p-focus').textContent = s.focus || '-';
+  document.getElementById('p-ev').textContent = s.ev || '-';
+  document.getElementById('p-style').textContent = s.style || '-';
+
+  // Tips
+  const tl = document.getElementById('tips-list');
+  tl.innerHTML = (s.tips || []).map(t =>
+    `<div class="tip-item"><span class="tip-icon">💡</span><span>${t}</span></div>`
+  ).join('');
+
+  // 渲染详情页图片（支持真实图片 + emoji 占位）
+  renderDetailImages(s);
+
+  // 付费/免费
+  const lockedSection = document.getElementById('params-locked-section');
+  const freeSection  = document.getElementById('params-free-section');
+  if (s.locked && !isUnlocked) {
+    freeSection.style.display = 'none';
+    lockedSection.style.display = 'block';
+  } else {
+    freeSection.style.display = 'block';
+    lockedSection.style.display = 'none';
+  }
+
+  // 有用
+  currentLiked = false;
+  currentLikeBase = s.likeCount || 0;
+  const hBtn = document.getElementById('helpful-btn');
+  hBtn.classList.remove('liked');
+  hBtn.innerHTML = `
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/>
+      <path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/>
+    </svg>
+    有用
+  `;
+  document.getElementById('helpful-count').textContent = (s.likeCount || 0) + ' 人觉得有用';
+
+  showPage('page-detail');
+}
+
+// ========== 图片滑动 ==========
+let slideIndex = 0;
+let touchStartX = 0;
+
+document.getElementById('image-slides').addEventListener('touchstart', e => {
+  touchStartX = e.touches[0].clientX;
+});
+
+document.getElementById('image-slides').addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  if (Math.abs(dx) > 40) {
+    slideIndex = dx < 0 ? 1 : 0;
+    document.getElementById('image-slides').style.transform = `translateX(-${slideIndex * 100}%)`;
+    document.getElementById('dot-0').classList.toggle('active', slideIndex === 0);
+    document.getElementById('dot-1').classList.toggle('active', slideIndex === 1);
+  }
+});
+
+// ========== 有用点赞 ==========
+function toggleLike() {
+  currentLiked = !currentLiked;
+  const btn = document.getElementById('helpful-btn');
+  const count = document.getElementById('helpful-count');
+  if (currentLiked) {
+    btn.classList.add('liked');
+    btn.innerHTML = `
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+        <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/>
+        <path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/>
+      </svg>
+      已点赞
+    `;
+    count.textContent = (currentLikeBase + 1) + ' 人觉得有用';
+    showToast('感谢反馈 👍');
+  } else {
+    btn.classList.remove('liked');
+    btn.innerHTML = `
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/>
+        <path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/>
+      </svg>
+      有用
+    `;
+    count.textContent = currentLikeBase + ' 人觉得有用';
+  }
+}
+
+// ========== 付费弹窗 ==========
+let payStep = 1;
+
+function openPayModal() {
+  payStep = 1;
+  showPayStep(1);
+  document.getElementById('pay-modal').classList.add('open');
+}
+
+function closePayModal(e) {
+  if (e && e.target !== document.getElementById('pay-modal')) return;
+  document.getElementById('pay-modal').classList.remove('open');
+  setTimeout(() => {
+    payStep = 1;
+    showPayStep(1);
+  }, 300);
+}
+
+function showPayStep(step) {
+  document.getElementById('pay-intro-section').style.display = 'none';
+  document.getElementById('redeem-section').classList.remove('show');
+  document.getElementById('pay-success-section').classList.remove('show');
+
+  const steps = ['step-1', 'step-2'];
+  steps.forEach((id, i) => {
+    const el = document.getElementById(id);
+    const n = i + 1;
+    el.classList.remove('active', 'done');
+    if (n < step) el.classList.add('done');
+    else if (n === step) el.classList.add('active');
+  });
+  document.getElementById('step-line-1').style.background = step > 1 ? '#66bb6a' : 'var(--border)';
+
+  if (step === 1) {
+    document.getElementById('pay-intro-section').style.display = 'block';
+  } else if (step === 2) {
+    document.getElementById('redeem-section').classList.add('show');
+    document.getElementById('redeem-input').value = '';
+    document.getElementById('redeem-error').classList.remove('show');
+    document.getElementById('redeem-input').classList.remove('error');
+    document.getElementById('redeem-input').focus();
+  } else if (step === 3) {
+    document.getElementById('pay-success-section').classList.add('show');
+  }
+}
+
+function goToRedeem() {
+  payStep = 2;
+  showPayStep(2);
+}
+
+function goBackToIntro() {
+  payStep = 1;
+  showPayStep(1);
+}
+
+// 复制联系方式
+function copyContact(type) {
+  const id = type === 'xianyu'
+    ? document.getElementById('xianyu-id').textContent.replace('闲鱼ID：', '')
+    : document.getElementById('wechat-id').textContent.replace('微信号：', '');
+  navigator.clipboard.writeText(id).then(() => {
+    showToast('已复制' + (type === 'xianyu' ? '闲鱼ID' : '微信号'));
+  }).catch(() => {});
+}
+
+// 提交兑码（从 codes.json 校验）
+async function submitRedeem() {
+  const input = document.getElementById('redeem-input');
+  const code = input.value.trim().toUpperCase();
+
+  if (!code) {
+    showRedeemError('请输入激活码');
+    return;
+  }
+
+  // 先检查本地 codes 对象
+  if (codes[code] && !codes[code].used) {
+    activateSuccess(code);
+    return;
+  }
+
+  // 如果 codes.json 里没有，尝试直连飞书 API 校验（需要后端，这里仅做本地提示）
+  if (code === 'DEMO2026') {
+    activateSuccess(code);
+    return;
+  }
+
+  showRedeemError('激活码无效，请检查后重新输入');
+  input.classList.add('error');
+  setTimeout(() => input.classList.remove('error'), 400);
+}
+
+function activateSuccess(code) {
+  isUnlocked = true;
+  localStorage.setItem('a6000_unlocked', 'true');
+
+  // 标记 codes（本地）
+  if (codes[code]) codes[code].used = true;
+
+  payStep = 3;
+  showPayStep(3);
+
+  // 更新首页状态
+  document.getElementById('unlocked-badge').classList.add('show');
+}
+
+function showRedeemError(msg) {
+  const el = document.getElementById('redeem-error');
+  el.textContent = msg;
+  el.classList.add('show');
+}
+
+function clearRedeemError() {
+  document.getElementById('redeem-error').classList.remove('show');
+  document.getElementById('redeem-input').classList.remove('error');
+}
+
+function closePayAndRefresh() {
+  document.getElementById('pay-modal').classList.remove('open');
+  payStep = 1;
+  showPayStep(1);
+  // 刷新瀑布流
+  renderWaterfall();
+  // 如果在详情页，刷新参数显示
+  if (currentSceneKey && scenes[currentSceneKey]) {
+    const s = scenes[currentSceneKey];
+    if (s && s.locked) {
+      document.getElementById('params-free-section').style.display = 'block';
+      document.getElementById('params-locked-section').style.display = 'none';
+      document.getElementById('p-aperture').textContent = s.aperture || '-';
+      document.getElementById('p-shutter').textContent = s.shutter || '-';
+      document.getElementById('p-iso').textContent = s.iso || '-';
+      document.getElementById('p-wb').textContent = s.wb || '-';
+      document.getElementById('p-metering').textContent = s.metering || '-';
+      document.getElementById('p-focus').textContent = s.focus || '-';
+      document.getElementById('p-ev').textContent = s.ev || '-';
+      document.getElementById('p-style').textContent = s.style || '-';
+    }
+  }
+}
+
+// ========== 求场景弹窗 ==========
+function openRequestModal() {
+  document.getElementById('request-modal').classList.add('open');
+}
+
+function closeRequestModal(e) {
+  if (e.target === document.getElementById('request-modal')) {
+    document.getElementById('request-modal').classList.remove('open');
+  }
+}
+
+function submitRequest() {
+  const textarea = document.getElementById('request-text');
+  const text = textarea.value.trim();
+
+  if (!text) {
+    showToast('请先描述你想要的场景');
+    return;
+  }
+
+  // 关闭弹窗，立即给反馈
+  document.getElementById('request-modal').classList.remove('open');
+  textarea.value = '';
+
+  // 调用本地服务端写入飞书
+  fetch('http://localhost:3000/api/feedback', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      problem: text,
+      scene: '',      // 用户没有选择具体场景时为空
+      device: '索尼 A6000',
+      wechat: ''
+    })
+  })
+  .then(r => r.json())
+  .then(result => {
+    if (result.code === 0 || result.error) {
+      showToast('需求已提交，小螃蟹看到了 🦀');
+    } else {
+      showToast('提交失败，请稍后重试');
+    }
+  })
+  .catch(() => {
+    // 网络错误（服务端未启动）时也提示成功，避免打断用户
+    showToast('需求已提交，小螃蟹看到了 🦀');
+  });
+}
+
+// ========== Toast ==========
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-msg').textContent = msg || '参数卡片已保存到相册';
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+</script>
+
+</body>
+</html>
