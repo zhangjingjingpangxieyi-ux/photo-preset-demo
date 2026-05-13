@@ -14,8 +14,8 @@
       "靠窗位置光线最好，避开正午直射。背景虚化选人物距离桌面1.5m以上。"
     ],
     "locked": true,
-    "imgEmoji": "☕",
-    "cover": "A_cozy_coffee_shop_interior_sc_2026-05-13T07-18-56.png",
+    "imgEmoji": "📸",
+    "coverUrl": "https://opsoss.q1.com/BULLETIN/2124/2124-SA-ZS/2026/05/08/1778234790860580x195-jp.png",
     "category1": "室内",
     "category2": "咖啡厅"
   },
@@ -34,8 +34,8 @@
       "黄金时段前30分钟最佳，逆光拍摄注意补曝光补偿。"
     ],
     "locked": false,
-    "imgEmoji": "🌿",
-    "cover": "Golden_hour_park_scene__green__2026-05-13T07-19-49.png",
+    "imgEmoji": "📸",
+    "coverUrl": "https://cdn.phototourl.com/free/2026-05-13-432f2991-3666-4a95-bc4d-87162829d1b6.png",
     "category1": "室外",
     "category2": "公园"
   },
@@ -54,8 +54,8 @@
       "站台灯光偏暖，白平衡手动调低偏冷可减少色偏。"
     ],
     "locked": true,
-    "imgEmoji": "🚇",
-    "cover": "Subway_station_platform_scene__2026-05-13T07-19-02.png",
+    "imgEmoji": "📸",
+    "coverUrl": "https://cdn.phototourl.com/free/2026-05-13-432f2991-3666-4a95-bc4d-87162829d1b6.png",
     "category1": "室内",
     "category2": "地铁"
   },
@@ -74,8 +74,8 @@
       "手持夜拍极限快门约1/60s，建议找支撑物。AWB可保留霓虹氛围色。"
     ],
     "locked": true,
-    "imgEmoji": "🌃",
-    "cover": "Neon_night_street_scene__urban_2026-05-13T07-19-10.png",
+    "imgEmoji": "📸",
+    "coverUrl": "https://cdn.phototourl.com/free/2026-05-13-432f2991-3666-4a95-bc4d-87162829d1b6.png",
     "category1": "室外",
     "category2": "街上"
   },
@@ -94,8 +94,8 @@
       "玻璃幕墙反光处注意偏光，可用手遮挡镜头边缘减少鬼影。"
     ],
     "locked": true,
-    "imgEmoji": "🏢",
-    "cover": "Shopping_mall_atrium_interior__2026-05-13T07-19-47.png",
+    "imgEmoji": "📸",
+    "coverUrl": "https://cdn.phototourl.com/free/2026-05-13-432f2991-3666-4a95-bc4d-87162829d1b6.png",
     "category1": "室内",
     "category2": "商场"
   },
@@ -114,8 +114,8 @@
       "阴天散射光最柔和，直射阳光下可用白色窗帘扩散。拍美食把物体靠近窗口。"
     ],
     "locked": false,
-    "imgEmoji": "🏠",
-    "cover": "Window_light_indoor_scene__sof_2026-05-13T07-20-37.png",
+    "imgEmoji": "📸",
+    "coverUrl": "https://opsoss.q1.com/BULLETIN/2124/2124-SA-ZS/2026/05/08/1778234790860580x195-jp.png",
     "category1": "室内",
     "category2": "家里"
   },
@@ -134,8 +134,8 @@
       "对着太阳曝光会欠曝人物，点测光对准人物后锁定曝光再构图。"
     ],
     "locked": false,
-    "imgEmoji": "🌅",
-    "cover": "Sunset_beach_scene__ocean_wave_2026-05-13T07-19-58.png",
+    "imgEmoji": "📸",
+    "coverUrl": "https://opsoss.q1.com/BULLETIN/2124/2124-SA-ZS/2026/05/08/1778234790860580x195-jp.png",
     "category1": "室外",
     "category2": "日落"
   },
@@ -154,8 +154,28 @@
       "阴天是拍照福音，光线均匀无死角。白平衡略偏暖防止灰冷画面。"
     ],
     "locked": false,
-    "imgEmoji": "🌥️",
-    "cover": "Overcast_street_photography_sc_2026-05-13T07-20-40.png",
+    "imgEmoji": "📸",
+    "coverUrl": "https://my.feishu.cn/wiki/BwSiwMhHfiV77mkYh8UcSotSnnc",
+    "category1": "室外",
+    "category2": "街上"
+  },
+  "测试": {
+    "id": "recvju6wr8lAOy",
+    "title": "测试",
+    "badge": "室外·街上",
+    "aperture": "f/2.8",
+    "shutter": "1/250s",
+    "iso": "400",
+    "wb": "6000K",
+    "metering": "评价测光",
+    "focus": "自动对焦",
+    "ev": "+0.3",
+    "tips": [
+      "测试你妈的"
+    ],
+    "locked": false,
+    "imgEmoji": "📸",
+    "coverUrl": "",
     "category1": "室外",
     "category2": "街上"
   }
