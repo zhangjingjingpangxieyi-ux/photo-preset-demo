@@ -15,6 +15,11 @@
 **内容策略**：图文笔记优先（降低创作成本），模板：参数卡片型 / 废片急诊型 / 场景教程型。小红书内容与工具双向打通，评论区高频问题 = 场景需求池。
 
 **Demo文件**：`c:\Users\zhangjing\WorkBuddy\20260508115221\photo-preset-demo.html`（2026-05-09完成）
+- 2026-05-12 更新：支持真实封面图，优先读 `cover_url` 字段（完整URL），其次读 `cover` 字段（文件名，自动拼 `public/images/` 路径），均无则用 emoji 占位图。图片文件放 `public/images/` 目录，push 后 1-2 分钟生效。
+
+**公开访问地址**：
+- Cloudflare Pages: https://photo-preset-demo.pages.dev （国内访问不稳定）
+- GitHub Pages: https://zhangjingjingpangxieyi-ux.github.io/photo-preset-demo/ （国内备用，推荐）
 
 **飞书多维表格配置（2026-05-12 迁移至用户自建表）**：
 - App ID: `cli_aa8b28a1143b1cc6`
