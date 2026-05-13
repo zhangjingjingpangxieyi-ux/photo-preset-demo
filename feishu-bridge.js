@@ -72,7 +72,8 @@ function mapScene(rec) {
     tips:     tips.length ? tips : [tipsRaw],
     locked:   f['locked'] === true || f['locked'] === 1,
     imgEmoji: '📸',
-    coverUrl: f['cover_url'] || f['coverUrl'] || '',
+    // cover_url 在飞书里是链接类型字段，返回 { link, text }，需要取 link
+    coverUrl: (f['cover_url']?.link || f['cover_url'] || f['coverUrl']?.link || f['coverUrl'] || ''),
     category1: f['category1'] || '',
     category2: f['category2'] || '',
   };
