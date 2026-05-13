@@ -72,7 +72,7 @@ function mapScene(rec) {
     tips:     tips.length ? tips : [tipsRaw],
     locked:   f['locked'] === true || f['locked'] === 1,
     imgEmoji: '📸',
-    coverUrl: f['cover_url'] || '',
+    coverUrl: f['cover_url'] || f['coverUrl'] || '',
     category1: f['category1'] || '',
     category2: f['category2'] || '',
   };
