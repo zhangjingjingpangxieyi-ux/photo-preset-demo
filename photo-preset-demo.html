@@ -31,61 +31,33 @@
     overflow-x: hidden;
   }
 
-  /* ========== 手机壳容器 ========== */
+  /* ========== H5 页面容器 ========== */
   .phone-wrap {
     display: flex;
     justify-content: center;
     align-items: flex-start;
     min-height: 100vh;
-    padding: 24px 16px;
-    background: #070708;
+    background: var(--bg);
   }
 
   .phone {
-    width: 375px;
-    min-height: 812px;
+    width: 100%;
+    max-width: 430px;
+    min-height: 100vh;
     background: var(--bg);
-    border-radius: 44px;
-    border: 2px solid #2a2a2c;
     overflow: hidden;
     position: relative;
-    box-shadow: 0 0 0 6px #111, 0 32px 80px rgba(0,0,0,0.8);
   }
 
-  /* ========== 状态栏 ========== */
+  /* ========== 状态栏（隐藏） ========== */
   .status-bar {
-    height: 44px;
-    padding: 14px 24px 0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--text-primary);
-    flex-shrink: 0;
-  }
-
-  .status-bar .notch {
-    width: 120px;
-    height: 30px;
-    background: #000;
-    border-radius: 0 0 18px 18px;
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-  }
-
-  .status-icons {
-    display: flex;
-    gap: 5px;
-    align-items: center;
+    display: none;
   }
 
   /* ========== 页面容器 ========== */
   .page {
     display: none;
-    height: calc(812px - 44px);
+    height: 100vh;
     overflow-y: auto;
     flex-direction: column;
     scrollbar-width: none;
@@ -1086,7 +1058,7 @@
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
       </svg>
-      <input type="text" placeholder="搜索场景，如「咖啡厅」「逆光」" id="search-input">
+      <input type="text" placeholder="搜索场景，如「咖啡厅」「逆光」" id="search-input" oninput="handleSearch(this.value)">
     </div>
 
     <!-- 一级筛选 -->
@@ -1529,6 +1501,22 @@ function applyFilter() {
   });
   renderWaterfall();
   renderLevel2Filters();  // 更新二级标签
+}
+
+// ========== 搜索功能 ==========
+function handleSearch(keyword) {
+  const k = keyword.trim().toLowerCase();
+  if (!k) {
+    applyFilter();
+    return;
+  }
+  filteredKeys = allKeys.filter(key => {
+    const s = scenes[key];
+    if (!s) return false;
+    const text = (s.title + ' ' + s.badge + ' ' + s.category1 + ' ' + s.category2 + ' ' + s.aperture + ' ' + s.shutter + ' ' + s.iso + ' ' + s.wb + ' ' + s.metering + ' ' + s.focus + ' ' + s.ev).toLowerCase();
+    return text.includes(k);
+  });
+  renderWaterfall();
 }
 
 // ========== 渲染瀑布流 ==========
